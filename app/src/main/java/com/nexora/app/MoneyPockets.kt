@@ -18,8 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.NumberFormat
+import java.util.Locale
 
 private const val POCKETS_KEY = "money_pockets"
+
+private fun formatPocketRupiah(value: Long): String = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(value).replace(",00", "")
 
 private data class MoneyPocket(
     val id: Long,
@@ -83,7 +87,7 @@ internal fun MoneyPocketsScreen(onBack: () -> Unit) {
                 Column(Modifier.padding(22.dp)) {
                     Text("TOTAL SELURUH POCKET", color = Color.White.copy(alpha = .8f), fontSize = 11.sp)
                     Spacer(Modifier.height(8.dp))
-                    Text(formatRupiah(total), color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Bold)
+                    Text(formatPocketRupiah(total), color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Bold)
                     Text("${pockets.size} tempat penyimpanan", color = Color.White.copy(alpha = .8f), fontSize = 12.sp)
                 }
             }
@@ -109,7 +113,7 @@ internal fun MoneyPocketsScreen(onBack: () -> Unit) {
                                 Text(p.name, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color(0xFF172033))
                                 Text(p.type, color = Color(0xFF64748B), fontSize = 12.sp)
                             }
-                            Text(formatRupiah(p.balance), fontWeight = FontWeight.Bold, color = Color(0xFF4C1D95), fontSize = 16.sp)
+                            Text(formatPocketRupiah(p.balance), fontWeight = FontWeight.Bold, color = Color(0xFF4C1D95), fontSize = 16.sp)
                         }
                         Spacer(Modifier.height(12.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
