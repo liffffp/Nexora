@@ -3,7 +3,7 @@ package com.nexora.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,19 +25,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private val NexoraBlue = Color(0xFF2563EB)
-private val PageBackground = Color(0xFFF4F7FB)
+private val NexoraPurple = Color(0xFF7C3AED)
+private val NexoraPurpleDark = Color(0xFF4C1D95)
+private val PageBackground = Color(0xFFF7F5FF)
 private val MutedText = Color(0xFF64748B)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme(colorScheme = lightColorScheme(primary = NexoraBlue)) {
+            MaterialTheme(
+                colorScheme = lightColorScheme(
+                    primary = NexoraPurple,
+                    onPrimary = Color.White,
+                    secondary = Color(0xFFA855F7),
+                    background = PageBackground,
+                    surface = Color.White
+                )
+            ) {
                 NexoraDashboard()
             }
         }
@@ -53,14 +65,22 @@ private fun NexoraDashboard() {
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            Text(
-                text = "NEXORA",
-                color = NexoraBlue,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp
-            )
-            Spacer(modifier = Modifier.height(6.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(R.drawable.ic_nexora_mark),
+                    contentDescription = "Logo Nexora",
+                    modifier = Modifier.size(34.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "NEXORA",
+                    color = NexoraPurpleDark,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Ringkasan keuangan",
                 color = Color(0xFF172033),
@@ -77,7 +97,7 @@ private fun NexoraDashboard() {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(containerColor = NexoraBlue)
+                colors = CardDefaults.cardColors(containerColor = NexoraPurple)
             ) {
                 Column(modifier = Modifier.padding(22.dp)) {
                     Text("SALDO SAAT INI", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
