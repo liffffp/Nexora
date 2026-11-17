@@ -136,6 +136,11 @@ private fun NexoraDashboard() {
     }
     val dialogType = remember { mutableStateOf<String?>(null) }
     val showResetDialog = remember { mutableStateOf(false) }
+    val showPockets = remember { mutableStateOf(false) }
+    if (showPockets.value) {
+        MoneyPocketsScreen(onBack = { showPockets.value = false })
+        return
+    }
     val totalIncome = entries.filter { it.type == "Pemasukan" }.sumOf { it.amount }
     val totalExpense = entries.filter { it.type == "Pengeluaran" }.sumOf { it.amount }
     val balance = totalIncome - totalExpense
@@ -196,6 +201,8 @@ private fun NexoraDashboard() {
                 SummaryCard("Pengeluaran", formatRupiah(totalExpense), Modifier.weight(1f), ExpenseRed)
             }
 
+            Spacer(modifier = Modifier.height(14.dp))
+            OutlinedTextField(value = "Money Pockets", onValueChange = {}, readOnly = true, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = { showPockets.value = true }) { Text("Buka") } }, label = { Text("Kelola saldo GoPay, bank, dan tunai") })
             Spacer(modifier = Modifier.height(18.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Button(
