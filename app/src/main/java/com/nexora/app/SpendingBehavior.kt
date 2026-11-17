@@ -52,10 +52,13 @@ private fun readSpendingRecords(context: Context): List<SpendingRecord> {
     } catch (_: Exception) { emptyList() }
 }
 
-private fun behaviorDate(value: String): Calendar? = try {
-    val date = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID")).apply { isLenient = false }.parse(value) ?: return null
-    Calendar.getInstance().apply { time = date }
-} catch (_: Exception) { null }
+private fun behaviorDate(value: String): Calendar? {
+    return try {
+        val date = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID")).apply { isLenient = false }.parse(value)
+            ?: return null
+        Calendar.getInstance().apply { time = date }
+    } catch (_: Exception) { null }
+}
 
 @Composable
 internal fun SpendingBehaviorScreen(onBack: () -> Unit) {
