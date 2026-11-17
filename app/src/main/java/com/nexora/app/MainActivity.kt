@@ -6,6 +6,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
@@ -54,6 +55,8 @@ private val NexoraPurple = Color(0xFF7C3AED)
 private val NexoraPurpleDark = Color(0xFF4C1D95)
 private val PageBackground = Color(0xFFF7F5FF)
 private val MutedText = Color(0xFF64748B)
+private val IncomeGreen = Color(0xFF15803D)
+private val ExpenseRed = Color(0xFFDC2626)
 private const val PREFS_NAME = "nexora_finance"
 private const val TRANSACTIONS_KEY = "transactions"
 
@@ -67,8 +70,7 @@ private data class FinanceEntry(
 )
 
 private fun formatRupiah(amount: Long): String =
-    NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(amount)
-        .replace(",00", "")
+    NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(amount).replace(",00", "")
 
 private fun loadEntries(context: Context): List<FinanceEntry> {
     val raw = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -133,6 +135,7 @@ private fun NexoraDashboard() {
         mutableStateListOf<FinanceEntry>().apply { addAll(loadEntries(context)) }
     }
     val dialogType = remember { mutableStateOf<String?>(null) }
+    val showResetDialog = remember { mutableStateOf(false) }
     val showPockets = remember { mutableStateOf(false) }
     if (showPockets.value) {
         MoneyPocketsScreen(onBack = { showPockets.value = false })
@@ -146,7 +149,10 @@ private fun NexoraDashboard() {
         Column(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Image(
                     painter = painterResource(R.drawable.ic_nexora_mark),
                     contentDescription = "Logo Nexora",
@@ -160,7 +166,12 @@ private fun NexoraDashboard() {
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 2.sp
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = { showResetDialog.value = true }) {
+                    Text("Reset data", color = ExpenseRed, fontSize = 12.sp)
+                }
             }
+
             Spacer(modifier = Modifier.height(10.dp))
             Text("Ringkasan keuangan", color = Color(0xFF172033), fontSize = 25.sp, fontWeight = FontWeight.Bold)
             Text("Catat dan pantau keuanganmu dengan mudah.", color = MutedText, fontSize = 14.sp)
@@ -168,17 +179,17 @@ private fun NexoraDashboard() {
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(22.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = NexoraPurple)
             ) {
                 Column(modifier = Modifier.padding(22.dp)) {
-                    Text("SALDO SAAT INI", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
+                    Text("SALDO SAAT INI", color = Color.White.copy(alpha = 0.82f), fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(formatRupiah(balance), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         "Saldo dihitung otomatis dari seluruh pemasukan dan pengeluaran.",
-                        color = Color.White.copy(alpha = 0.85f),
+                        color = Color.White.copy(alpha = 0.88f),
                         fontSize = 12.sp
                     )
                 }
@@ -186,8 +197,8 @@ private fun NexoraDashboard() {
 
             Spacer(modifier = Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                SummaryCard("Pemasukan", formatRupiah(totalIncome), Modifier.weight(1f), Color(0xFF15803D))
-                SummaryCard("Pengeluaran", formatRupiah(totalExpense), Modifier.weight(1f), Color(0xFFDC2626))
+                SummaryCard("Pemasukan", formatRupiah(totalIncome), Modifier.weight(1f), IncomeGreen)
+                SummaryCard("Pengeluaran", formatRupiah(totalExpense), Modifier.weight(1f), ExpenseRed)
             }
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -196,16 +207,16 @@ private fun NexoraDashboard() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Button(
                     onClick = { dialogType.value = "Pemasukan" },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF15803D)),
-                    shape = RoundedCornerShape(14.dp)
-                ) { Text("+ Pemasukan") }
+                    modifier = Modifier.weight(1f).height(52.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = IncomeGreen),
+                    shape = RoundedCornerShape(16.dp)
+                ) { Text("+ Pemasukan", fontWeight = FontWeight.SemiBold) }
                 Button(
                     onClick = { dialogType.value = "Pengeluaran" },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).height(52.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = NexoraPurple),
-                    shape = RoundedCornerShape(14.dp)
-                ) { Text("+ Pengeluaran") }
+                    shape = RoundedCornerShape(16.dp)
+                ) { Text("+ Pengeluaran", fontWeight = FontWeight.SemiBold) }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -215,15 +226,15 @@ private fun NexoraDashboard() {
             if (entries.isEmpty()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
+                    shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White)
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(20.dp),
+                        modifier = Modifier.fillMaxWidth().padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text("Belum ada catatan", fontWeight = FontWeight.SemiBold, color = Color(0xFF334155))
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             "Pemasukan dan pengeluaran yang kamu tambahkan akan muncul di sini.",
                             color = MutedText,
@@ -232,7 +243,7 @@ private fun NexoraDashboard() {
                     }
                 }
             } else {
-                entries.take(20).forEach { entry ->
+                entries.take(30).forEach { entry ->
                     EntryCard(entry)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -254,6 +265,29 @@ private fun NexoraDashboard() {
             }
         )
     }
+
+    if (showResetDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showResetDialog.value = false },
+            shape = RoundedCornerShape(24.dp),
+            containerColor = Color.White,
+            title = { Text("Reset seluruh data?", fontWeight = FontWeight.Bold) },
+            text = {
+                Text("Semua catatan pemasukan dan pengeluaran di perangkat ini akan dihapus. Tindakan ini tidak bisa dibatalkan.")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    entries.clear()
+                    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                        .edit().remove(TRANSACTIONS_KEY).apply()
+                    showResetDialog.value = false
+                }) { Text("Ya, hapus semua", color = ExpenseRed, fontWeight = FontWeight.Bold) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetDialog.value = false }) { Text("Batal", color = NexoraPurple) }
+            }
+        )
+    }
 }
 
 @Composable
@@ -262,53 +296,121 @@ private fun EntryDialog(
     onDismiss: () -> Unit,
     onSave: (Long, String, String) -> Unit
 ) {
+    val isIncome = type == "Pemasukan"
+    val accent = if (isIncome) IncomeGreen else ExpenseRed
+    val categories = if (isIncome) {
+        listOf("Gaji", "Bonus", "Hadiah", "Usaha", "Lainnya")
+    } else {
+        listOf("Makanan", "Transportasi", "Belanja", "Tagihan", "Pendidikan", "Lainnya")
+    }
     val amount = remember { mutableStateOf("") }
-    val category = remember { mutableStateOf(if (type == "Pemasukan") "Gaji" else "Makanan") }
+    val category = remember { mutableStateOf(categories.first()) }
     val note = remember { mutableStateOf("") }
     val error = remember { mutableStateOf("") }
+    val parsedAmount = amount.value.toLongOrNull() ?: 0L
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Tambah $type") },
+        shape = RoundedCornerShape(26.dp),
+        containerColor = Color.White,
+        title = {
+            Column {
+                Text(if (isIncome) "Catat pemasukan" else "Catat pengeluaran", fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    if (isIncome) "Tambahkan uang yang kamu terima." else "Catat uang yang kamu keluarkan.",
+                    color = MutedText,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = amount.value,
-                    onValueChange = { value -> amount.value = value.filter { it.isDigit() }; error.value = "" },
-                    label = { Text("Jumlah (Rp)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = category.value,
-                    onValueChange = { category.value = it },
-                    label = { Text("Kategori") },
-                    singleLine = true
-                )
+            Column(
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = accent.copy(alpha = 0.08f))
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
+                        Text("NOMINAL", color = accent, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                        OutlinedTextField(
+                            value = amount.value,
+                            onValueChange = { value ->
+                                amount.value = value.filter { it.isDigit() }.take(15)
+                                error.value = ""
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("0", fontSize = 24.sp) },
+                            prefix = { Text("Rp", fontWeight = FontWeight.SemiBold) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            shape = RoundedCornerShape(14.dp)
+                        )
+                        if (parsedAmount > 0L) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(formatRupiah(parsedAmount), color = accent, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        }
+                    }
+                }
+
+                Text("Pilih kategori", color = Color(0xFF334155), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    categories.chunked(3).forEach { group ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                            group.forEach { item ->
+                                val selected = category.value == item
+                                TextButton(
+                                    onClick = { category.value = item },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = ButtonDefaults.textButtonColors(
+                                        containerColor = if (selected) accent.copy(alpha = 0.12f) else PageBackground,
+                                        contentColor = if (selected) accent else MutedText
+                                    )
+                                ) {
+                                    Text(item, fontSize = 11.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium)
+                                }
+                            }
+                            repeat(3 - group.size) { Spacer(modifier = Modifier.weight(1f)) }
+                        }
+                    }
+                }
+
                 OutlinedTextField(
                     value = note.value,
                     onValueChange = { note.value = it },
+                    modifier = Modifier.fillMaxWidth(),
                     label = { Text("Catatan (opsional)") },
-                    singleLine = true
+                    placeholder = { Text("Contoh: makan siang") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(14.dp)
                 )
                 if (error.value.isNotEmpty()) {
-                    Text(error.value, color = Color(0xFFDC2626), fontSize = 12.sp)
+                    Text(error.value, color = ExpenseRed, fontSize = 12.sp)
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                val value = amount.value.toLongOrNull()
-                if (value == null || value <= 0L) {
-                    error.value = "Masukkan jumlah yang valid."
-                } else if (category.value.isBlank()) {
-                    error.value = "Kategori wajib diisi."
-                } else {
-                    onSave(value, category.value.trim(), note.value.trim())
-                }
-            }) { Text("Simpan") }
+            Button(
+                onClick = {
+                    val value = amount.value.toLongOrNull()
+                    if (value == null || value <= 0L) {
+                        error.value = "Masukkan nominal lebih dari Rp0."
+                    } else {
+                        onSave(value, category.value, note.value.trim())
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = accent),
+                shape = RoundedCornerShape(12.dp)
+            ) { Text("Simpan catatan", fontWeight = FontWeight.SemiBold) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Batal") } }
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Batal", color = MutedText) }
+        }
     )
 }
 
@@ -331,7 +433,7 @@ private fun EntryCard(entry: FinanceEntry) {
             }
             Text(
                 (if (isIncome) "+ " else "- ") + formatRupiah(entry.amount),
-                color = if (isIncome) Color(0xFF15803D) else Color(0xFFDC2626),
+                color = if (isIncome) IncomeGreen else ExpenseRed,
                 fontWeight = FontWeight.Bold
             )
         }
