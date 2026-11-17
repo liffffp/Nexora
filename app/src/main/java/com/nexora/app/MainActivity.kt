@@ -140,6 +140,11 @@ private fun NexoraDashboard() {
     val showSubscriptions = remember { mutableStateOf(false) }
     val showDebtTracker = remember { mutableStateOf(false) }
     val showPrivacyDashboard = remember { mutableStateOf(false) }
+    val showFinancialTimeline = remember { mutableStateOf(false) }
+    if (showFinancialTimeline.value) {
+        FinancialTimelineScreen(onBack = { showFinancialTimeline.value = false })
+        return
+    }
     if (showPrivacyDashboard.value) {
         PrivacyDashboardScreen(onBack = { showPrivacyDashboard.value = false })
         return
@@ -224,6 +229,8 @@ private fun NexoraDashboard() {
             OutlinedTextField(value = "Debt Tracker", onValueChange = {}, readOnly = true, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = { showDebtTracker.value = true }) { Text("Buka") } }, label = { Text("Kelola utang, piutang, dan cicilan") })
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(value = "Privacy Dashboard", onValueChange = {}, readOnly = true, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = { showPrivacyDashboard.value = true }) { Text("Buka") } }, label = { Text("Lihat privasi dan penyimpanan data") })
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(value = "Financial Timeline", onValueChange = {}, readOnly = true, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = { showFinancialTimeline.value = true }) { Text("Buka") } }, label = { Text("Lihat perjalanan transaksi dari waktu ke waktu") })
             Spacer(modifier = Modifier.height(18.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Button(
