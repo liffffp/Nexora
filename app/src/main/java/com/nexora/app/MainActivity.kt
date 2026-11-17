@@ -138,6 +138,11 @@ private fun NexoraDashboard() {
     val showResetDialog = remember { mutableStateOf(false) }
     val showPockets = remember { mutableStateOf(false) }
     val showSubscriptions = remember { mutableStateOf(false) }
+    val showDebtTracker = remember { mutableStateOf(false) }
+    if (showDebtTracker.value) {
+        DebtTrackerScreen(onBack = { showDebtTracker.value = false })
+        return
+    }
     if (showSubscriptions.value) {
         SubscriptionManagerScreen(onBack = { showSubscriptions.value = false })
         return
@@ -210,6 +215,8 @@ private fun NexoraDashboard() {
             OutlinedTextField(value = "Money Pockets", onValueChange = {}, readOnly = true, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = { showPockets.value = true }) { Text("Buka") } }, label = { Text("Kelola saldo GoPay, bank, dan tunai") })
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(value = "Subscription Manager", onValueChange = {}, readOnly = true, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = { showSubscriptions.value = true }) { Text("Buka") } }, label = { Text("Pantau langganan dan pembayaran rutin") })
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(value = "Debt Tracker", onValueChange = {}, readOnly = true, modifier = Modifier.fillMaxWidth(), trailingIcon = { TextButton(onClick = { showDebtTracker.value = true }) { Text("Buka") } }, label = { Text("Kelola utang, piutang, dan cicilan") })
             Spacer(modifier = Modifier.height(18.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Button(
