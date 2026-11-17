@@ -88,18 +88,20 @@ private fun monthlySubscriptionCost(item: NexoraSubscription): Long = when (item
     else -> item.amount
 }
 
-private fun daysUntilSubscription(dateText: String): Long? = try {
-    val format = SimpleDateFormat("dd/MM/yyyy", Locale("id", "ID")).apply { isLenient = false }
-    val target = format.parse(dateText) ?: return null
-    val today = java.util.Calendar.getInstance().apply {
-        set(java.util.Calendar.HOUR_OF_DAY, 0)
-        set(java.util.Calendar.MINUTE, 0)
-        set(java.util.Calendar.SECOND, 0)
-        set(java.util.Calendar.MILLISECOND, 0)
-    }.time
-    ((target.time - today.time) / 86_400_000L)
-} catch (_: Exception) {
-    null
+private fun daysUntilSubscription(dateText: String): Long? {
+    return try {
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale("id", "ID")).apply { isLenient = false }
+        val target = format.parse(dateText) ?: return null
+        val today = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.time
+        (target.time - today.time) / 86_400_000L
+    } catch (_: Exception) {
+        null
+    }
 }
 
 @Composable
