@@ -4,6 +4,7 @@ import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -296,7 +297,7 @@ internal fun SubscriptionManagerScreen(onBack: () -> Unit) {
                         modifier = Modifier.fillMaxWidth()
                     )
                     Text("Kategori", fontSize = 12.sp, color = SubscriptionMuted)
-                    Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                         listOf("Streaming", "Musik", "Aplikasi", "Cloud", "Lainnya").forEach { option ->
                             FilterChip(
                                 selected = category == option,
